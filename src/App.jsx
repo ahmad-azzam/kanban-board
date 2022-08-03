@@ -1,11 +1,14 @@
-import { Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+import Auth from "./pages/Auth";
 
 const App = () => {
   return (
     <>
-      <Routes>
-
-      </Routes>
+      <div className="font-nunito">
+        <Routes>
+          <Route path="/v1/auth" element={<Auth />} />
+        </Routes>
+      </div>
     </>
   )
 }
