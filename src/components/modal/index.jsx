@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import useClickOutside from "../hooks/useClickOutside"
 import IconClose from "../../assets/close.png"
 import IconExclamation from "../../assets/exclamation.png"
@@ -6,13 +6,21 @@ import Input from "../Input"
 import ButtonPrimary from "../button/Primary"
 import ButtonWhite from "../button/White"
 import ButtonDanger from "../button/Danger"
+import { useNavigate } from "react-router-dom"
+import { api } from "../../apis"
 
-const Modal = ({ type, setShowModal, payloadTask }) => {
+const Modal = ({ type, setShowModal, payloadTask, idItem, idTodo, setReload }) => {
+    const navigate = useNavigate()
     const [formTask, setFormTask] = useState({
         name: "",
         progress_percentage: ""
     })
     const [loading, setLoading] = useState(false)
+
+    const isEdit = useMemo(() => {
+        return payloadTask?.name || payloadTask?.progress_percentage ? true : false
+    }, [payloadTask?.name || payloadTask?.progress_percentage])
+
 
     const handleChange = (e) => {
         setFormTask(current => {
@@ -35,10 +43,49 @@ const Modal = ({ type, setShowModal, payloadTask }) => {
         if (!loading) setShowModal(false)
     })
 
-    console.log(formTask, '<< form tast')
+    const handleSubmit = async () => {
+        try {
+            if (!loading) {
+                setLoading(true)
+
+                const url = isEdit ? `todos/${idTodo}/items/${idItem}` : `todos/${idTodo}/items`
+                const method = isEdit ? 'PATCH' : 'POST'
+                const data = {
+                    name: formTask.name,
+                    progress_percentage: Number(formTask.progress_percentage)
+                }
+                if (isEdit) data.todo_id = idTodo
+
+                const { data: dataRes } = await api({
+                    method,
+                    url,
+                    data
+                })
+                console.log(dataRes, '<<< data')
+                setShowModal(false)
+                setReload(true)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const handleDelete = async () => {
+        try {
+            await api({
+                method: "DELETE",
+                url: `/todos/${idTodo}/items/${idItem}`
+            })
+            setShowModal(false)
+            setReload(true)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
 
     useEffect(() => {
-        if (payloadTask?.name || payloadTask?.progress_percentage) {
+        if (isEdit) {
             setFormTask(payloadTask)
         }
     }, [payloadTask?.name, payloadTask?.progress_percentage])
@@ -66,14 +113,14 @@ const Modal = ({ type, setShowModal, payloadTask }) => {
                                         </div>
                                         <div className="flex flex-col space-y-2 mb-4">
                                             <label className="text-xs font-bold">Progress</label>
-                                            <Input type={'text'} name="progress_percentage" placeholder="Type your Progress" onChange={handleChange} />
+                                            <Input type={'text'} value={formTask?.progress_percentage} name="progress_percentage" placeholder="Type your Progress" onChange={handleChange} />
                                         </div>
                                         <div className="ml-auto flex space-x-3">
                                             <div className="min-w-max">
                                                 <ButtonWhite title="Cancel" onClick={closeModal} />
                                             </div>
                                             <div className="min-w-max">
-                                                <ButtonPrimary title="Save Task" />
+                                                <ButtonPrimary title="Save Task" onClick={handleSubmit} />
                                             </div>
                                         </div>
                                     </div>
@@ -103,7 +150,7 @@ const Modal = ({ type, setShowModal, payloadTask }) => {
                                             <ButtonWhite title="Cancel" onClick={closeModal} />
                                         </div>
                                         <div className="min-w-max">
-                                            <ButtonDanger title={'Delete'} />
+                                            <ButtonDanger title={'Delete'} onClick={handleDelete} />
                                         </div>
                                     </div>
                                 </div>
