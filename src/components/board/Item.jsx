@@ -1,7 +1,25 @@
+import { useState } from "react"
 import ButtonMenu from "../button/Menu"
+import Modal from "../modal"
 
 
 const Item = ({ data, firstData, lastData }) => {
+    const [showModal, setShowModal] = useState(false)
+    const [showModalDelete, setShowModalDelete] = useState(false)
+    const [payloadTask, setPayloadTask] = useState({})
+
+    const handleClick = type => {
+        if (type === 'edit') {
+            setPayloadTask({
+                name: data.name,
+                progress_percentage: data.progress_percentage
+            })
+            setShowModal(true)
+        } else if (type === 'delete') (
+            setShowModalDelete(true)
+        )
+    }
+
     return (
         <>
             <div className="bg-[#FAFAFA] w-full max-h-max px-4 pt-4 py-5 flex flex-col rounded-md mb-3">
@@ -18,9 +36,12 @@ const Item = ({ data, firstData, lastData }) => {
                             {`${data?.progress_percentage}%`}
                         </div>
                     </div>
-                    <ButtonMenu />
+                    <ButtonMenu onClick={handleClick} />
                 </div>
             </div>
+
+            {showModal && <Modal type={'task-management'} setShowModal={setShowModal} payloadTask={payloadTask} />}
+            {showModalDelete && <Modal type={'task-delete'} setShowModal={setShowModalDelete} />}
         </>
     )
 }
