@@ -40,7 +40,6 @@ const Login = ({ setMode }) => {
                     Dont have acount yet? <span className="cursor-pointer text-teal-500" onClick={() => setMode('register')}>Register here</span>
                 </span>
             </LayoutAuth>
-
         </>
     )
 }
