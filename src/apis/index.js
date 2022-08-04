@@ -6,6 +6,6 @@ export const apiLogin = axios.create({ baseURL })
 export const api = axios.create({
     baseURL,
     headers: {
-        token: localStorage.getItem('token')
+        authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2NTk5NDUzNzl9.G4TOpuaESVOZG7psiEeiAthkTz4chOp8RWMBKXUXyZU`
     }
 })
