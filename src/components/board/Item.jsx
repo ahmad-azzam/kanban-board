@@ -1,9 +1,11 @@
 import { useState } from "react"
+import { api } from "../../apis"
 import ButtonMenu from "../button/Menu"
 import Modal from "../modal"
 
 
-const Item = ({ data, firstData, lastData }) => {
+
+const Item = ({ data, firstData, lastData, idTodo, setReload, rightId, leftId }) => {
     const [showModal, setShowModal] = useState(false)
     const [showModalDelete, setShowModalDelete] = useState(false)
     const [payloadTask, setPayloadTask] = useState({})
@@ -15,9 +17,29 @@ const Item = ({ data, firstData, lastData }) => {
                 progress_percentage: data.progress_percentage
             })
             setShowModal(true)
-        } else if (type === 'delete') (
+        } else if (type === 'delete') {
             setShowModalDelete(true)
-        )
+        } else handleMove(type)
+    }
+
+    const handleMove = async type => {
+        try {
+            const target_todo_id = type === "move_right" ? rightId : leftId
+            const url = `todos/${idTodo}/items/${data.id}`
+            const method = 'PATCH'
+
+            const { data: dataRes } = await api({
+                method,
+                url,
+                data: {
+                    target_todo_id
+                }
+            })
+            console.log(dataRes)
+            setReload(true)
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     return (
@@ -30,18 +52,18 @@ const Item = ({ data, firstData, lastData }) => {
                 <div className="flex justify-between items-center">
                     <div className="flex space-x-4 items-center">
                         <div className="w-40">
-                            <div style={{ width: `${data.progress_percentage}%` }} className={`${data?.progress_percentage < 100 ? 'bg-primary' : 'bg-success'} rounded-md h-4`} />
+                            <div style={{ width: `${data?.progress_percentage}%` }} className={`${data?.progress_percentage < 100 ? 'bg-primary' : 'bg-success'} rounded-md h-4`} />
                         </div>
                         <div className="text-sm">
                             {`${data?.progress_percentage}%`}
                         </div>
                     </div>
-                    <ButtonMenu onClick={handleClick} />
+                    <ButtonMenu onClick={handleClick} firstData={firstData} lastData={lastData} />
                 </div>
             </div>
 
-            {showModal && <Modal type={'task-management'} setShowModal={setShowModal} payloadTask={payloadTask} />}
-            {showModalDelete && <Modal type={'task-delete'} setShowModal={setShowModalDelete} />}
+            {showModal && <Modal type={'task-management'} setShowModal={setShowModal} payloadTask={payloadTask} idItem={data.id} idTodo={idTodo} setReload={setReload} />}
+            {showModalDelete && <Modal type={'task-delete'} setShowModal={setShowModalDelete} idItem={data.id} idTodo={idTodo} setReload={setReload} />}
         </>
     )
 }

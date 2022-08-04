@@ -11,6 +11,7 @@ const Board = () => {
                 method: "GET",
                 url: 'todos'
             })
+            console.log(data, '<<< data')
             setBoards(data)
         } catch (err) {
             console.log(err)
@@ -20,6 +21,7 @@ const Board = () => {
     useEffect(() => {
         getBoards()
     }, [])
+
 
     return (
         <>
@@ -33,7 +35,9 @@ const Board = () => {
                         boards.map((el, idx) => {
                             const firstData = idx === 0 ? true : false
                             const lastData = idx === boards.length - 1 ? true : false
-                            return <KanbanBoard key={`${el.id}-kanbanBoard`} todo={el} firstData={firstData} lastData={lastData} />
+                            const rightId = el[idx + 1]?.id
+                            const leftId = el[idx - 1]?.id
+                            return <KanbanBoard key={`${el.id}-kanbanBoard`} todo={el} firstData={firstData} lastData={lastData} rightId={rightId} leftId={leftId} />
                         })
                     }
                 </div>

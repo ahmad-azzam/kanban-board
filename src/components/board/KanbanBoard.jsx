@@ -5,9 +5,10 @@ import Item from './Item'
 import NewTask from './NewTask'
 
 
-const KanbanBoard = ({ todo, firstData, lastData }) => {
+const KanbanBoard = ({ todo, firstData, lastData, leftId, rightId }) => {
     const [items, setItems] = useState([])
     const [showModal, setShowModal] = useState(false)
+    const [reload, setReload] = useState(false)
 
     const handleModal = useCallback(() => {
         return setShowModal(true)
@@ -22,12 +23,18 @@ const KanbanBoard = ({ todo, firstData, lastData }) => {
             setItems(data)
         } catch (err) {
             console.log(err)
+        } finally {
+            setReload(false)
         }
     }
 
     useEffect(() => {
         if (todo?.id) getItems()
     }, [todo?.id])
+
+    useEffect(() => {
+        if (reload) getItems()
+    }, [reload])
 
     return (
         <>
@@ -40,13 +47,13 @@ const KanbanBoard = ({ todo, firstData, lastData }) => {
                 </div>
                 {
                     items.map((el, idx) => {
-                        return <Item key={`${el.id}-item`} data={el} firstData={firstData} lastData={lastData} />
+                        return <Item key={`${el.id}-item`} data={el} firstData={firstData} lastData={lastData} idTodo={todo.id} setReload={setReload} />
                     })
                 }
                 <NewTask onClick={handleModal} />
             </div>
 
-            {showModal && <Modal type={'task-management'} setShowModal={setShowModal} />}
+            {showModal && <Modal type={'task-management'} setShowModal={setShowModal} idTodo={todo.id} setReload={setReload} />}
         </>
     )
 }
