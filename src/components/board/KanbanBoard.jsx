@@ -35,7 +35,7 @@ const KanbanBoard = ({ todo, firstData, lastData }) => {
                 </div>
                 {
                     items.map((el, idx) => {
-                        return <Item key={`${el.id}-item`} data={el} />
+                        return <Item key={`${el.id}-item`} data={el} firstData={firstData} lastData={lastData} />
                     })
                 }
                 <NewTask />
