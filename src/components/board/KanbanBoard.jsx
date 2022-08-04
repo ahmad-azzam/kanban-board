@@ -1,11 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../apis'
+import Modal from '../modal'
 import Item from './Item'
 import NewTask from './NewTask'
 
 
 const KanbanBoard = ({ todo, firstData, lastData }) => {
     const [items, setItems] = useState([])
+    const [showModal, setShowModal] = useState(false)
+
+    const handleModal = useCallback(() => {
+        return setShowModal(true)
+    }, [])
 
     const getItems = async () => {
         try {
@@ -13,7 +19,6 @@ const KanbanBoard = ({ todo, firstData, lastData }) => {
                 method: "GET",
                 url: `todos/${todo.id}/items`
             })
-            console.log(data)
             setItems(data)
         } catch (err) {
             console.log(err)
@@ -38,8 +43,10 @@ const KanbanBoard = ({ todo, firstData, lastData }) => {
                         return <Item key={`${el.id}-item`} data={el} firstData={firstData} lastData={lastData} />
                     })
                 }
-                <NewTask />
+                <NewTask onClick={handleModal} />
             </div>
+
+            {showModal && <Modal type={'task-management'} setShowModal={setShowModal} />}
         </>
     )
 }
