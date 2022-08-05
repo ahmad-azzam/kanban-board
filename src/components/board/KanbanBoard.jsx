@@ -6,7 +6,7 @@ import Item from './Item'
 import NewTask from './NewTask'
 
 
-const KanbanBoard = ({ todo, firstData, lastData, leftId, rightId, setReloadBoard }) => {
+const KanbanBoard = ({ todo, firstData, lastData, leftId, rightId, setReloadBoard, reloadBoard }) => {
     const [items, setItems] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [reload, setReload] = useState(false)
@@ -32,11 +32,11 @@ const KanbanBoard = ({ todo, firstData, lastData, leftId, rightId, setReloadBoar
     }, [todo?.id])
 
     useEffect(() => {
-        if (reload) {
+        if (reload || reloadBoard) {
             getItems()
             setReloadBoard(reload)
         }
-    }, [reload])
+    }, [reload, reloadBoard])
 
     return (
         <>

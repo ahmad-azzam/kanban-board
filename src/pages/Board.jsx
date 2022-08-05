@@ -54,7 +54,7 @@ const Board = () => {
                             const lastData = idx === boards.length - 1 ? true : false
                             const rightId = boards[idx + 1]
                             const leftId = boards[idx - 1]
-                            return <KanbanBoard key={`${el.id}-kanbanBoard`} todo={el} firstData={firstData} lastData={lastData} rightId={rightId} leftId={leftId} setReloadBoard={setReload} />
+                            return <KanbanBoard key={`${el.id}-kanbanBoard`} todo={el} firstData={firstData} lastData={lastData} rightId={rightId} leftId={leftId} reloadBoard={reload} setReloadBoard={setReload} />
                         })
                     }
                 </div>
