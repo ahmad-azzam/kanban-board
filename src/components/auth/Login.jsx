@@ -1,9 +1,12 @@
 import { useCallback, useState } from "react"
+import { apiLogin } from "../../apis"
 import ButtonPrimary from "../button/Primary"
 import Input from "../Input"
 import LayoutAuth from "./Layout"
+import { useNavigate } from "react-router-dom"
 
 const Login = ({ setMode }) => {
+    const navigate = useNavigate()
     const [formLogin, setFormLogin] = useState({
         email: "",
         password: ""
@@ -18,13 +21,24 @@ const Login = ({ setMode }) => {
         })
     }
 
-    const handleLogin = useCallback(async () => {
+    const handleLogin = async () => {
         try {
-            console.log('masuk login')
+            const { data } = await apiLogin({
+                method: 'POST',
+                url: 'auth/login',
+                data: formLogin
+            })
+            console.log(data)
+            localStorage.setItem('token', data.auth_token)
+            setFormLogin({
+                email: "",
+                password: ""
+            })
+            navigate('/v1/board')
         } catch (err) {
             console.log(err)
         }
-    }, [])
+    }
 
     return (
         <>
