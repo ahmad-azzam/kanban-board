@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../apis'
-import { getTodos } from '../../service'
+import { getAllItems, getTodos } from '../../service'
 import Modal from '../modal'
 import Item from './Item'
 import NewTask from './NewTask'
 
 
-const KanbanBoard = ({ todo, firstData, lastData, leftId, rightId }) => {
+const KanbanBoard = ({ todo, firstData, lastData, leftId, rightId, setReloadBoard }) => {
     const [items, setItems] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [reload, setReload] = useState(false)
@@ -17,11 +17,11 @@ const KanbanBoard = ({ todo, firstData, lastData, leftId, rightId }) => {
 
     const getItems = async () => {
         try {
-            const { data } = await getItems({ id: todo.id })
+            const { data } = await getAllItems({ id: todo.id })
             setItems(data)
             console.log(data)
         } catch (err) {
-            console.log(err.response, 'error todos')
+            console.log(err, 'error todos')
         } finally {
             setReload(false)
         }
@@ -29,10 +29,13 @@ const KanbanBoard = ({ todo, firstData, lastData, leftId, rightId }) => {
 
     useEffect(() => {
         if (todo?.id) getItems()
-    }, [todo?.id, localStorage?.getItem('token')])
+    }, [todo?.id])
 
     useEffect(() => {
-        if (reload) getItems()
+        if (reload) {
+            getItems()
+            setReloadBoard(reload)
+        }
     }, [reload])
 
     return (
@@ -46,7 +49,7 @@ const KanbanBoard = ({ todo, firstData, lastData, leftId, rightId }) => {
                 </div>
                 {
                     items.map((el, idx) => {
-                        return <Item key={`${el.id}-item`} data={el} firstData={firstData} lastData={lastData} idTodo={todo.id} setReload={setReload} />
+                        return <Item key={`${el.id}-item`} data={el} firstData={firstData} lastData={lastData} idTodo={todo.id} setReload={setReload} leftId={leftId} rightId={rightId} />
                     })
                 }
                 <NewTask onClick={handleModal} />

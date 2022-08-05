@@ -8,13 +8,17 @@ import ButtonWhite from "../button/White"
 import ButtonDanger from "../button/Danger"
 import { useNavigate } from "react-router-dom"
 import { api } from "../../apis"
-import { deleteTask, submitTask } from "../../service"
+import { createTodo, deleteTask, submitTask } from "../../service"
 
 const Modal = ({ type, setShowModal, payloadTask, idItem, idTodo, setReload }) => {
     const navigate = useNavigate()
     const [formTask, setFormTask] = useState({
         name: "",
         progress_percentage: ""
+    })
+    const [formTodo, setFormTodo] = useState({
+        title: "",
+        description: ""
     })
     const [loading, setLoading] = useState(false)
 
@@ -25,6 +29,15 @@ const Modal = ({ type, setShowModal, payloadTask, idItem, idTodo, setReload }) =
 
     const handleChange = (e) => {
         setFormTask(current => {
+            return {
+                ...current,
+                [e.target.name]: e.target.value
+            }
+        })
+    }
+
+    const handleChangeTodo = (e) => {
+        setFormTodo(current => {
             return {
                 ...current,
                 [e.target.name]: e.target.value
@@ -56,12 +69,23 @@ const Modal = ({ type, setShowModal, payloadTask, idItem, idTodo, setReload }) =
                     progress_percentage: Number(formTask.progress_percentage)
                 }
                 if (isEdit) data.todo_id = idTodo
+                console.log(data)
 
                 const { data: dataRes } = await submitTask({ method, url, data })
                 console.log(dataRes, '<<< data')
                 setShowModal(false)
                 setReload(true)
             }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const handleNewTodo = async () => {
+        try {
+            await createTodo({ data: formTodo })
+            setShowModal(false)
+            setReload(true)
         } catch (err) {
             console.log(err)
         }
@@ -150,6 +174,34 @@ const Modal = ({ type, setShowModal, payloadTask, idItem, idTodo, setReload }) =
                             </div>
                         ) : (
                             <>
+                                <div className="px-6 py-7">
+                                    <div className="flex flex-col">
+                                        <div className="flex justify-between items-center mb-4">
+                                            <div className="text-lg font-bold">
+                                                Add New Todo
+                                            </div>
+                                            <div className="w-6 h-6 cursor-pointer" onClick={closeModal}>
+                                                <img src={IconClose} className="w-full h-full" alt="" />
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col space-y-2 mb-4">
+                                            <label className="text-xs font-bold">Todo Title</label>
+                                            <Input type={'text'} value={formTodo?.name} name="title" placeholder="Type your Todo" onChange={handleChangeTodo} />
+                                        </div>
+                                        <div className="flex flex-col space-y-2 mb-4">
+                                            <label className="text-xs font-bold">Description</label>
+                                            <Input type={'text'} value={formTodo?.progress_percentage} name="description" placeholder="Type your Description" onChange={handleChangeTodo} />
+                                        </div>
+                                        <div className="ml-auto flex space-x-3">
+                                            <div className="min-w-max">
+                                                <ButtonWhite title="Cancel" onClick={closeModal} />
+                                            </div>
+                                            <div className="min-w-max">
+                                                <ButtonPrimary title="Save Task" onClick={handleNewTodo} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </>
                         )
                     }
