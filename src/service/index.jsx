@@ -21,10 +21,10 @@ export const createTodo = async ({ data }) => {
     })
 }
 
-export const getItems = async ({ id }) => {
+export const getAllItems = async ({ id }) => {
     return await api({
         method: 'GET',
-        url: `todos/${id}`,
+        url: `todos/${id}/items`,
         headers: {
             authorization: `bearer ${localStorage?.getItem('token')}`
         }

@@ -25,7 +25,7 @@ const Item = ({ data, firstData, lastData, idTodo, setReload, rightId, leftId })
 
     const handleMove = async type => {
         try {
-            const target_todo_id = type === "move_right" ? rightId : leftId
+            const target_todo_id = type === "move__right" ? +rightId?.id : +leftId?.id
             const url = `todos/${idTodo}/items/${data.id}`
             const method = 'PATCH'
 
