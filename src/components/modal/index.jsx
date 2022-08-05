@@ -8,6 +8,7 @@ import ButtonWhite from "../button/White"
 import ButtonDanger from "../button/Danger"
 import { useNavigate } from "react-router-dom"
 import { api } from "../../apis"
+import { deleteTask, submitTask } from "../../service"
 
 const Modal = ({ type, setShowModal, payloadTask, idItem, idTodo, setReload }) => {
     const navigate = useNavigate()
@@ -56,11 +57,7 @@ const Modal = ({ type, setShowModal, payloadTask, idItem, idTodo, setReload }) =
                 }
                 if (isEdit) data.todo_id = idTodo
 
-                const { data: dataRes } = await api({
-                    method,
-                    url,
-                    data
-                })
+                const { data: dataRes } = await submitTask({ method, url, data })
                 console.log(dataRes, '<<< data')
                 setShowModal(false)
                 setReload(true)
@@ -72,17 +69,13 @@ const Modal = ({ type, setShowModal, payloadTask, idItem, idTodo, setReload }) =
 
     const handleDelete = async () => {
         try {
-            await api({
-                method: "DELETE",
-                url: `/todos/${idTodo}/items/${idItem}`
-            })
+            await deleteTask({ idItem, idTodo })
             setShowModal(false)
             setReload(true)
         } catch (err) {
             console.log(err)
         }
     }
-
 
     useEffect(() => {
         if (isEdit) {

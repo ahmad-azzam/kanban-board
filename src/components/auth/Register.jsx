@@ -1,6 +1,5 @@
-import { useCallback, useState } from "react"
-
-import { apiLogin } from "../../apis"
+import { useState } from "react"
+import { registerService } from "../../service"
 import ButtonPrimary from "../button/Primary"
 import Input from "../Input"
 import LayoutAuth from "./Layout"
@@ -25,12 +24,7 @@ const Register = ({ setMode }) => {
 
     const handleRegister = async () => {
         try {
-            const { data } = await apiLogin({
-                method: 'POST',
-                url: 'signup',
-                data: formRegister
-            })
-            console.log(data, '<<< data')
+            const { data } = await registerService({ data: formRegister })
             localStorage.setItem('token', data.auth_token)
             setFormRegister({
                 name: "",

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../apis'
+import { getTodos } from '../../service'
 import Modal from '../modal'
 import Item from './Item'
 import NewTask from './NewTask'
@@ -16,13 +17,11 @@ const KanbanBoard = ({ todo, firstData, lastData, leftId, rightId }) => {
 
     const getItems = async () => {
         try {
-            const { data } = await api({
-                method: "GET",
-                url: `todos/${todo.id}/items`
-            })
+            const { data } = await getItems({ id: todo.id })
             setItems(data)
+            console.log(data)
         } catch (err) {
-            console.log(err)
+            console.log(err.response, 'error todos')
         } finally {
             setReload(false)
         }
@@ -30,7 +29,7 @@ const KanbanBoard = ({ todo, firstData, lastData, leftId, rightId }) => {
 
     useEffect(() => {
         if (todo?.id) getItems()
-    }, [todo?.id])
+    }, [todo?.id, localStorage?.getItem('token')])
 
     useEffect(() => {
         if (reload) getItems()

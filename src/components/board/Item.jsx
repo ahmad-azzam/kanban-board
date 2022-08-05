@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { api } from "../../apis"
+import { moveService } from "../../service"
 import ButtonMenu from "../button/Menu"
 import Modal from "../modal"
 
@@ -28,13 +29,7 @@ const Item = ({ data, firstData, lastData, idTodo, setReload, rightId, leftId })
             const url = `todos/${idTodo}/items/${data.id}`
             const method = 'PATCH'
 
-            const { data: dataRes } = await api({
-                method,
-                url,
-                data: {
-                    target_todo_id
-                }
-            })
+            const { data: dataRes } = await moveService({ method, url, data: { target_todo_id } })
             console.log(dataRes)
             setReload(true)
         } catch (err) {
