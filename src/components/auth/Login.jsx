@@ -4,6 +4,7 @@ import ButtonPrimary from "../button/Primary"
 import Input from "../Input"
 import LayoutAuth from "./Layout"
 import { useNavigate } from "react-router-dom"
+import { loginService } from "../../service"
 
 const Login = ({ setMode }) => {
     const navigate = useNavigate()
@@ -23,11 +24,7 @@ const Login = ({ setMode }) => {
 
     const handleLogin = async () => {
         try {
-            const { data } = await apiLogin({
-                method: 'POST',
-                url: 'auth/login',
-                data: formLogin
-            })
+            const { data } = await loginService({ data: formLogin })
             console.log(data)
             localStorage.setItem('token', data.auth_token)
             setFormLogin({

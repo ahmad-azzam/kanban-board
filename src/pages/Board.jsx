@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react"
 import { api } from "../apis"
 import KanbanBoard from "../components/board/KanbanBoard"
+import { getTodos } from "../service"
 
 const Board = () => {
     const [boards, setBoards] = useState([])
 
     const getBoards = async () => {
         try {
-            const { data } = await api({
-                method: "GET",
-                url: 'todos'
-            })
+            const { data } = await getTodos()
             console.log(data, '<<< data')
             setBoards(data)
         } catch (err) {
